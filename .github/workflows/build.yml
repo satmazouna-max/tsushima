@@ -6,13 +6,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      # تفعيل الجافا 17 نيشان لتتوافق مع نظام بناء قوقل الحديث
+      # تفعيل الجافا 17 المتوافقة
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
-      # بناء التطبيق مباشرة بأحدث الأدوات المتوافقة
+      # السطر السحري: إجبار السيرفر على إنشاء مجلد app الافتراضي وفتح صلاحيات الكتابة
+      - name: Fix Missing Directories
+        run: |
+          mkdir -p app/src/main/res/values
+          mkdir -p app/src/main/java/com/example/android/tvleanback/data
+          chmod -R 777 .
+
+      # بناء التطبيق مباشرة بأحدث الأدوات
       - name: Build Debug APK
         run: |
           npm install -g gradle || true
