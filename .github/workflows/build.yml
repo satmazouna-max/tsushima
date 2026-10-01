@@ -6,25 +6,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      # تفعيل الجافا 17 المتوافقة
+      # تشغيل الجافا 11 المستقرة
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '11'
 
-      # السطر السحري: إجبار السيرفر على إنشاء مجلد app الافتراضي وفتح صلاحيات الكتابة
-      - name: Fix Missing Directories
+      # إجبار النظام على استخدام نسخة Gradle 6.1.1 المتوافقة تماماً مع jcenter
+      - name: Setup Gradle Environment
         run: |
-          mkdir -p app/src/main/res/values
-          mkdir -p app/src/main/java/com/example/android/tvleanback/data
-          chmod -R 777 .
+          mkdir -p gradle/wrapper
+          wget -O gradle/wrapper/gradle-wrapper.jar https://githubusercontent.com || true
+          echo "distributionUrl=https\://services.gradle.org/distributions/gradle-6.1.1-all.zip" > gradle/wrapper/gradle-wrapper.properties
+          chmod +x gradlew || true
 
-      # بناء التطبيق مباشرة بأحدث الأدوات
+      # بناء تطبيق ABOUBAKTV
       - name: Build Debug APK
-        run: |
-          npm install -g gradle || true
-          gradle wrapper --gradle-version 7.4
-          ./gradlew assembleDebug
+        run: ./gradlew assembleDebug
 
       - uses: actions/upload-artifact@v4
         with:
