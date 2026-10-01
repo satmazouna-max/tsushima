@@ -1,30 +1,35 @@
-name: Build ABOUBAKTV APK
-on: [push, workflow_dispatch]
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      
-      # تشغيل الجافا 11 المستقرة
-      - uses: actions/setup-java@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 8
+        uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: '11'
+          distribution: temurin
+          java-version: '8'
+          cache: gradle
 
-      # إجبار النظام على استخدام نسخة Gradle 6.1.1 المتوافقة تماماً مع jcenter
-      - name: Setup Gradle Environment
-        run: |
-          mkdir -p gradle/wrapper
-          wget -O gradle/wrapper/gradle-wrapper.jar https://githubusercontent.com || true
-          echo "distributionUrl=https\://services.gradle.org/distributions/gradle-6.1.1-all.zip" > gradle/wrapper/gradle-wrapper.properties
-          chmod +x gradlew || true
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
-      # بناء تطبيق ABOUBAKTV
       - name: Build Debug APK
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --no-daemon
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
-          name: ABOUBAKTV-APK
+          name: tsushima-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
