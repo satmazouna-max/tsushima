@@ -6,19 +6,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      # تفعيل الجافا 17 نيشان لتتوافق مع نظام بناء قوقل الحديث
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '17'
 
-      # الأمر الذكي: يصنع ملف المحرك الناقص داخلياً وبدون تحميل روابط خارجية
-      - name: Generate Gradle Wrapper
+      # بناء التطبيق مباشرة بأحدث الأدوات المتوافقة
+      - name: Build Debug APK
         run: |
           npm install -g gradle || true
           gradle wrapper --gradle-version 7.4
-
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug
+          ./gradlew assembleDebug
 
       - uses: actions/upload-artifact@v4
         with:
