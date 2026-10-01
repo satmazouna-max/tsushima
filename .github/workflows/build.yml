@@ -11,14 +11,11 @@ jobs:
           distribution: 'zulu'
           java-version: '11'
 
-      # السطر السحري: يصنع ملفات نظام البناء الناقصة تلقائياً
-      - name: Generate Missing Gradle Wrapper
-        run: wget https://githubusercontent.com && wget https://githubusercontent.com.bat && mkdir -p gradle/wrapper && wget -O gradle/wrapper/gradle-wrapper.jar https://githubusercontent.com && wget -O gradle/wrapper/gradle-wrapper.properties https://githubusercontent.com
-
-      - name: Update Gradle Version
+      # الأمر الذكي: يصنع ملف المحرك الناقص داخلياً وبدون تحميل روابط خارجية
+      - name: Generate Gradle Wrapper
         run: |
-          chmod +x gradlew || true
-          ./gradlew wrapper --gradle-version 7.4
+          npm install -g gradle || true
+          gradle wrapper --gradle-version 7.4
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug
